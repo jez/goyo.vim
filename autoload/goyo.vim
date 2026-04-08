@@ -159,6 +159,10 @@ function! s:resize_pads()
   call s:setup_pad(t:goyo_pads.r, 1, hmargin - xoff, 'h')
 endfunction
 
+function! GoyoResizePads()
+  call s:resize_pads()
+endfunction
+
 function! s:tranquilize()
   let bg = s:get_color('Normal', 'bg#')
   for grp in ['NonText', 'FoldColumn', 'ColorColumn', 'VertSplit',
@@ -215,7 +219,7 @@ function! s:maps_resize()
   return mapped
 endfunction
 
-nnoremap <silent> <plug>(goyo-resize) :<c-u>call <sid>resize_pads()<cr>
+nnoremap <silent> <plug>(goyo-resize) :<c-u>let t:goyo_dim = <sid>parse_arg(t:goyo_dim_expr) <bar> call <sid>resize_pads()<cr>
 
 function! s:goyo_on(dim)
   let dim = s:parse_arg(a:dim)
@@ -315,7 +319,7 @@ function! s:goyo_on(dim)
   augroup goyo
     autocmd!
     autocmd TabLeave    * nested call s:goyo_off()
-    autocmd VimResized  *        call s:resize_pads()
+    autocmd VimResized  *        let t:goyo_dim = s:parse_arg(t:goyo_dim_expr) | call s:resize_pads()
     autocmd ColorScheme *        call s:tranquilize()
     autocmd BufWinEnter *        call s:hide_linenr() | call s:hide_statusline()
     autocmd WinEnter,WinLeave *  call s:hide_statusline()
